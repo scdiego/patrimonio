@@ -57,7 +57,7 @@ public class JpRepoImpresionCargos extends javax.swing.JPanel {
     public void setParent(MainMdi parent) {
         this.parent = parent;
     }
-        public void inicializar(){
+    public void inicializar(){
         this.cargarResponsables();
                 try { 
             conn = Conexion.obtener();
@@ -223,6 +223,11 @@ public class JpRepoImpresionCargos extends javax.swing.JPanel {
         jLabel1.setText("Responsable");
 
         cmbResponsable.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbResponsable.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbResponsableActionPerformed(evt);
+            }
+        });
 
         jButton1.setText("Buscar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -303,6 +308,10 @@ public class JpRepoImpresionCargos extends javax.swing.JPanel {
         // TODO add your handling code here:
          this.imprimirCargos();
     }//GEN-LAST:event_btnImprimirActionPerformed
+
+    private void cmbResponsableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbResponsableActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmbResponsableActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

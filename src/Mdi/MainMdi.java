@@ -28,7 +28,7 @@ public class MainMdi extends javax.swing.JFrame {
     
     private jpRepoBienes objRepoBienes = new jpRepoBienes();
     private jpRepoLibroBienes objRepoLibroBienes = new jpRepoLibroBienes();
-    private JpRepoImpresionCargos objRepoCargos = new JpRepoImpresionCargos();
+    private JpRepoImpresionCargosV2 objRepoCargos = new JpRepoImpresionCargosV2();
     private JpRepoInfAuditoria objRepoAuditoria = new JpRepoInfAuditoria();
     
     
