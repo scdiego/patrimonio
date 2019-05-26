@@ -118,6 +118,8 @@ public class ResponsableJpaController implements Serializable {
         String estado = responsible.getEstado();
         String nombre = responsible.getNombre();
         boolean baja = responsible.getBaja();
+        Sector unsector = responsible.getSector();
+        String cargo = responsible.getCargo();
         em = getEntityManager();
         Responsable newResponsible = (Responsable) em.find(Responsable.class ,id);
         try {
@@ -126,6 +128,8 @@ public class ResponsableJpaController implements Serializable {
             newResponsible.setDni(dni);
             newResponsible.setEstado(estado);
             newResponsible.setNombre(nombre);
+            newResponsible.setSector(unsector);
+            newResponsible.setCargo(cargo);
             em.getTransaction().commit();
         }
         catch(Exception ex) {
