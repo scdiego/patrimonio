@@ -64,8 +64,8 @@ public class MainMdi extends javax.swing.JFrame {
         jifFormResponsable.setContentPane(objFormResponsable);
         objFormResponsable.setParent(this);
         objFormResponsable.SetUser(this.user);
-        objFormResponsable.setSize(800,350);
-        jifFormResponsable.setSize(800,350);
+        objFormResponsable.setSize(800,550);
+        jifFormResponsable.setSize(800,550);
         
         jifFormCargo.setContentPane(objFormCargo);
         objFormCargo.setParent(this);   
@@ -76,8 +76,8 @@ public class MainMdi extends javax.swing.JFrame {
         // Reportes //
         jifRepoBienes.setContentPane(objRepoBienes);
        // objRepoBienes.setParent(this);   
-        objRepoBienes.setSize(1100,350);
-        jifRepoBienes.setSize(1100,350);
+        objRepoBienes.setSize(1100,550);
+        jifRepoBienes.setSize(1100,550);
         
         jifRepoLibroBienes.setContentPane(objRepoLibroBienes);
         objRepoLibroBienes.setParent(this);   
@@ -86,8 +86,8 @@ public class MainMdi extends javax.swing.JFrame {
         
         jifRepoCargos.setContentPane(objRepoCargos);
         //objRepoCargos.setParent(this);   
-        objRepoCargos.setSize(800,350);
-        jifRepoCargos.setSize(800,350);
+        objRepoCargos.setSize(550,450);
+        jifRepoCargos.setSize(550,450);
         
         jifRepoAuditoria.setContentPane(objRepoAuditoria);
         //objRepoAuditoria.setParent(this);   

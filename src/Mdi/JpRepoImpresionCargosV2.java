@@ -10,8 +10,10 @@ import Negocio.Bien;
 import Negocio.Responsable;
 import Negocio.Usuario;
 import Persistencia.AsignacionJpaController;
+import Persistencia.BienJpaController;
 import Persistencia.ResponsableJpaController;
 import Presentacion.FrmLibroBienes;
+import Reportes.AbsJasperReports;
 import dbConn.Conexion;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -21,8 +23,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.ParameterMode;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.persistence.StoredProcedureQuery;
 
 /**
  *
@@ -36,6 +45,7 @@ public class JpRepoImpresionCargosV2 extends javax.swing.JPanel {
     DefaultListModel modeloResponsables = new DefaultListModel();
     List<Responsable> listaResponsables = new ArrayList();
     Responsable responsable;
+    private EntityManagerFactory emf = null;
     
     List<Bien> asignaciones = new ArrayList();
     DefaultListModel modelo = new DefaultListModel();
@@ -44,6 +54,10 @@ public class JpRepoImpresionCargosV2 extends javax.swing.JPanel {
     private Connection conn;
     public String reportName = "PlanilladeCargos";
     Map<String,Object> parametros = new HashMap();
+    
+    Bien unBien;
+    BienJpaController controllerBien = new BienJpaController();
+    ResponsableJpaController responsableDao = new ResponsableJpaController();
     
     private Usuario user;
     public MainMdi parent;
@@ -55,8 +69,9 @@ public class JpRepoImpresionCargosV2 extends javax.swing.JPanel {
         
     }
     
+    
     public void cargarResponsables(){
-        ResponsableJpaController responsableDao = new ResponsableJpaController();
+        
         this.listaResponsables = responsableDao.findResponsableEntities();
         
         this.cmbResponsable.removeAllItems();
@@ -76,15 +91,15 @@ public class JpRepoImpresionCargosV2 extends javax.swing.JPanel {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(FrmLibroBienes.class.getName()).log(Level.SEVERE, null, ex);
         }
-        this.btnImprimir.setEnabled(false);
-        
+       // this.btnImprimir.setEnabled(false);
+        this.lstBienesImprimir.setModel(this.modeloImprimir);
+        emf = Persistence.createEntityManagerFactory("patromonioPU");
     }
     
     public void setearResponsable(){
-        ResponsableJpaController dao = new ResponsableJpaController();
         if(this.cmbResponsable.getItemCount() > 0){
             String nombre = this.cmbResponsable.getSelectedItem().toString();
-            this.responsable = dao.findResponsableByNombre(nombre);
+            this.responsable = responsableDao.findResponsableByNombre(nombre);
         }
         
         
@@ -98,16 +113,7 @@ public class JpRepoImpresionCargosV2 extends javax.swing.JPanel {
     }
     
     public void completarGrid(){
-        /*
-        JList lista = new JList();
-        DefaultListModel modelo = new DefaultListModel();
-        for(int i = 1; i<=10; i++){
-                modelo.addElement(i);
-        }
-        lista.setModel(modelo);
 
-        */
-        // Lista de bienes asignados 
         this.modelo.clear();
         AsignacionJpaController asignacionDao = new AsignacionJpaController();
         this.asignaciones = asignacionDao.findAsignacionesByResponsable(this.responsable);
@@ -122,22 +128,131 @@ public class JpRepoImpresionCargosV2 extends javax.swing.JPanel {
     }
     
     public void agregar(){
-        
+        String nombre =  this.modelo.getElementAt(this.lstBienes.getSelectedIndex()).toString();
+        String[] parts = nombre.split("---") ;
+        unBien = this.controllerBien.findBienNroInventario(Integer.parseInt(parts[0].trim()));        
+        this.modeloImprimir.addElement(unBien);
+    //    this.modelo.remove(this.lstBienes.getSelectedIndex());
+    }
+    
+    public void agregar(int posicion){
+        String nombre =  this.modelo.getElementAt(posicion).toString();
+        String[] parts = nombre.split("---") ;
+        //unBien = this.controllerBien.findBien(Integer.parseInt(parts[0].trim()));        
+        unBien = this.controllerBien.findBienNroInventario(Integer.parseInt(parts[0].trim()));
+        this.modeloImprimir.addElement(unBien);
+     //   this.modelo.remove(posicion);
     }
     
     public void agregarTodos(){
+        //int max = this.modelo.getSize();
+        for(int i = 0; i <= this.modelo.getSize()-1; i += 1){
+            this.agregar(i);
+        }
         
     }
 
     public void quitar(){
         
+        String nombre =  this.modeloImprimir.getElementAt(this.lstBienes.getSelectedIndex()).toString();
+        this.modeloImprimir.remove(this.lstBienes.getSelectedIndex());
+        String[] parts = nombre.split("---") ;
+        unBien = this.controllerBien.findBienNroInventario(Integer.parseInt(parts[0].trim()));   
+        this.modelo.addElement(unBien);
+    }
+    
+    public void quitar(int posicion){
+        String nombre =  this.modeloImprimir.getElementAt(posicion).toString();
+        this.modeloImprimir.remove(this.lstBienes.getSelectedIndex());
+        String[] parts = nombre.split("---") ;
+        unBien = this.controllerBien.findBienNroInventario(Integer.parseInt(parts[0].trim()));   
+        this.modelo.addElement(unBien);
     }
     
     public void quitarTodos(){
+        int max = this.modeloImprimir.getSize();
+        for(int i = 0; i <= max-1; i += 1){
+            this.quitar(i);
+        }
+    }
+    
+    public void limpiarLista(){
+        this.modeloImprimir.clear();
+        this.lstBienesImprimir.removeAll();
         
     }
-        
     
+    public EntityManager getEntityManager() {
+        return emf.createEntityManager();
+    }
+    
+    public void imprimir(){
+        EntityManager em = null;
+        em = getEntityManager();
+        em.getTransaction().begin();
+        StoredProcedureQuery sp = em.createStoredProcedureQuery("agregarBienesReporte");
+//        StoredProcedureQuery sp2 = em.createStoredProcedureQuery("AGREGA_BIEN_REPORTE");
+        
+        sp.registerStoredProcedureParameter("bienes", String.class, ParameterMode.IN);
+        sp.registerStoredProcedureParameter("id", Integer.class, ParameterMode.OUT);
+
+        //int idResponsable = this.responsable.getId();
+        //sp.setParameter("IDRESPONSABLE", idResponsable);
+        //sp.execute();
+        
+        //final  int idReporte = Integer.parseInt(sp.getOutputParameterValue("IDREPORTE").toString());
+        //em.getTransaction().commit();
+        
+        //https://www.facebook.com/LuliPedotti
+        //https://www.facebook.com/photo.php?fbid=739472276455401&set=a.107809909621644&type=3&theater
+        
+        //String nombreResponsable = responsableDao.findResponsable(this.idResponsable).toString();
+            
+        
+        String element = "";
+        String bienes = "";
+        int max = this.modeloImprimir.getSize();
+        for(int i = 0; i <= max-1; i += 1){
+            element = this.modeloImprimir.getElementAt(i).toString();
+            String[] parts = element.split("---");
+            bienes += parts[0].trim() + ",";
+        }
+        bienes = bienes.substring(0, bienes.length()-1);
+        sp.setParameter("bienes", bienes);
+        sp.execute();
+        final  int idReporte = Integer.parseInt(sp.getOutputParameterValue("id").toString());
+        em.getTransaction().commit();
+        
+        
+        
+
+        String vpath = System.getenv().get("RUTAREPORTES")+"/"+this.reportName+".jasper";
+        this.inicializarParametros(idReporte,"");
+        AbsJasperReports.createReport(conn, vpath,parametros);
+        AbsJasperReports.showViewer();
+        
+    }
+    public void inicializarParametros(int reporte, String responsable){
+        this.parametros.put("idReport", reporte);
+        this.parametros.put("responsable", responsable);
+    }    
+    
+    private void showNoResults() {
+        JOptionPane.showMessageDialog(this,
+                "No se encontraron bienes seleccinados para imprimir el reporte",        
+                "Algo salió mal",                        
+                 JOptionPane.INFORMATION_MESSAGE);
+
+    } 
+    
+    public boolean control(){
+        boolean salida = false;
+        if(this.modeloImprimir.getSize() > 0){
+            salida = true;
+        }
+            
+        return salida;
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -158,7 +273,7 @@ public class JpRepoImpresionCargosV2 extends javax.swing.JPanel {
         btnAceptar = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
+        lstBienesImprimir = new javax.swing.JList<>();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
@@ -178,6 +293,11 @@ public class JpRepoImpresionCargosV2 extends javax.swing.JPanel {
         });
 
         btnImprimir.setText("Imprimir");
+        btnImprimir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImprimirActionPerformed(evt);
+            }
+        });
 
         lstBienes.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -220,12 +340,13 @@ public class JpRepoImpresionCargosV2 extends javax.swing.JPanel {
             }
         });
 
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
+        lstBienesImprimir.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
-        jScrollPane2.setViewportView(jList1);
+        lstBienesImprimir.setValueIsAdjusting(true);
+        jScrollPane2.setViewportView(lstBienesImprimir);
 
         jButton2.setText(">>");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -289,25 +410,20 @@ public class JpRepoImpresionCargosV2 extends javax.swing.JPanel {
                     .addComponent(btnImprimir))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2))
-                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(91, 91, 91)
-                                .addComponent(jButton1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton2)
-                                .addGap(78, 78, 78)
-                                .addComponent(jButton3)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton4)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(91, 91, 91)
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2)
+                        .addGap(78, 78, 78)
+                        .addComponent(jButton3)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton4)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnAceptar)
                 .addContainerGap())
@@ -324,6 +440,7 @@ public class JpRepoImpresionCargosV2 extends javax.swing.JPanel {
         // TODO add your handling code here:
         this.setearResponsable();
         this.cargarAsignaciones();
+        this.limpiarLista();
     }//GEN-LAST:event_cmbResponsableMouseClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -347,6 +464,15 @@ public class JpRepoImpresionCargosV2 extends javax.swing.JPanel {
                 
     }//GEN-LAST:event_jButton4ActionPerformed
 
+    private void btnImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirActionPerformed
+        // TODO add your handling code here:
+        if(this.control()){
+            this.imprimir();
+        }else{
+            this.showNoResults();
+        }
+    }//GEN-LAST:event_btnImprimirActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceptar;
@@ -357,11 +483,11 @@ public class JpRepoImpresionCargosV2 extends javax.swing.JPanel {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JList<String> lstBienes;
+    private javax.swing.JList<String> lstBienesImprimir;
     // End of variables declaration//GEN-END:variables
 }
