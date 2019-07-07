@@ -86,9 +86,7 @@ public class JpRepoImpresionCargosV2 extends javax.swing.JPanel {
         this.cargarResponsables();
                 try { 
             conn = Conexion.obtener();
-        } catch (SQLException ex) {
-            Logger.getLogger(FrmLibroBienes.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
+        } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(FrmLibroBienes.class.getName()).log(Level.SEVERE, null, ex);
         }
        // this.btnImprimir.setEnabled(false);

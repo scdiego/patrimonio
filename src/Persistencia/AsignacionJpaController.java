@@ -140,10 +140,20 @@ public class AsignacionJpaController implements Serializable {
         }
     }
 
+    public Responsable findSubResponsableByNroInventario(Integer nroInventario) throws NoResultException {
+             EntityManager em = getEntityManager();
+      em.getEntityManagerFactory().getCache().evictAll();
+        Query query = em.createQuery("SELECT a FROM Asignacion a WHERE a.bien.nroInventario =:nroInventario").setParameter("nroInventario", nroInventario);
+        
+            Asignacion asignacion = (Asignacion) query.getSingleResult();
+            return asignacion.getSubResponsable();
+         
+    }
+    
     public Responsable findResponsableByNroInventario(Integer nroInventario) throws NoResultException {
       EntityManager em = getEntityManager();
       em.getEntityManagerFactory().getCache().evictAll();
-        Query query = em.createQuery("SELECT a FROM Asignacion a WHERE a.bien.nroInventario =:nroInventario").setParameter("nroInventario", nroInventario);
+        Query query = em.createQuery("SELECT a FROM Asignacion a WHERE  a.fechaDesde is not null and a.fechaHasta is null and  a.bien.nroInventario =:nroInventario").setParameter("nroInventario", nroInventario);
         
             Asignacion asignacion = (Asignacion) query.getSingleResult();
             return asignacion.getResponsable();
@@ -153,7 +163,7 @@ public class AsignacionJpaController implements Serializable {
     public Sector findSectorByNroInventario(Integer nroInventario) throws NoResultException{
         EntityManager em = getEntityManager();
         em.getEntityManagerFactory().getCache().evictAll();
-        Query query = em.createQuery("SELECT a FROM Asignacion a WHERE a.bien.nroInventario =:nroInventario").setParameter("nroInventario", nroInventario);
+        Query query = em.createQuery("SELECT a FROM Asignacion a WHERE a.fechaDesde is not null and a.fechaHasta is null and   a.bien.nroInventario =:nroInventario").setParameter("nroInventario", nroInventario);
         
             Asignacion asignacion = (Asignacion) query.getSingleResult();
             return asignacion.getResponsable().getSector();
