@@ -144,23 +144,26 @@ public class FrmCvsImport extends javax.swing.JPanel {
 
     }
     
-    public void guardarBienes(){
-        //formateo campos
+    public void borrargrid(){
+        if (this.tblBienes.getRowCount() > 0) {
+            for (int i = tblBienes.getRowCount() - 1; i > -1; i--) {
+                tblBienes.removeRow(i);
+            }
+        }
     }
 
     public void cargarRegistros(){
-       // Iterator<RegistroImportacionBien> it = lista.iterator();
-       // while (it.hasNext()){
-       //     this.insertarRegistro(it.next().getNroInventario(), it.next().getCodigo(), it.next().getDescripcion(), it.next().getFecha(), it.next().getNroActa(), it.next().getValor(), it.next().getArea(), it.next().getResponsable());
-       // }
+
        RegistroImportacionBien r = new RegistroImportacionBien();
        int size=this.lista.size();
+       int cont = 0;
        for(int x=0;x < size ; x++) {
-           //his.insertarRegistro(it.next().getNroInventario(), it.next().getCodigo(), it.next().getDescripcion(), it.next().getFecha(), it.next().getNroActa(), it.next().getValor(), it.next().getArea(), it.next().getResponsable());
-           
            this.insertarRegistro(lista.get(x).getNroInventario(),lista.get(x).getCodigo(),lista.get(x).getDescripcion(),lista.get(x).getFecha(),lista.get(x).getNroActa(),lista.get(x).getValor(),lista.get(x).getArea(),lista.get(x).getResponsable());
+           cont = cont + 1;
        }
-        this.guardarBienes();
+      //  this.guardarBienes();
+        this.borrargrid();
+        JOptionPane.showMessageDialog(null, cont  + " Registros Importados ","Importar Bienes", JOptionPane.INFORMATION_MESSAGE);
     }
     
 

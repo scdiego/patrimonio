@@ -274,6 +274,9 @@ public class jpFormBien extends javax.swing.JPanel {
         this.txtNrodeInventario.setText(null);
         this.txtResolucion.setText(null);
         this.txtValor.setText(null);
+        this.txtResponsable.setText(null);
+        this.txtSubResponsable.setText(null);
+        this.txtArea.setText(null);
       //  this.txtResolucionBaja.setText(null);
       //  this.txtFechaBaja.setText(null);
        
@@ -374,6 +377,30 @@ public class jpFormBien extends javax.swing.JPanel {
         */
     }
     
+    public void accionCancelarBoton(boolean limpiarCampos){
+        // TODO add your handling code here:
+        if(this.btnGuardar.isEnabled()){
+            int respuesta = JOptionPane.showConfirmDialog(null, "Está editando un Bien.\n¿Desea salir de todos modos?", "Confirmación", JOptionPane.YES_NO_OPTION);
+            switch(respuesta) {
+                case JOptionPane.YES_OPTION:
+                //--- Operaciones en caso afirmativo
+                    this.nuevoBien = true;
+                    this.activarBM(false);
+                    
+                    if(limpiarCampos){
+                        this.limpiarComponentes();
+                    }else{
+                        this.miparent.ocultarBien();    
+                    }
+                    this.cargarUltimo();
+                            
+                    
+                break;
+            }
+        }else{
+        this.miparent.ocultarBien();
+        }
+    }
 
     
     public void guardarAsignacion(){
@@ -925,30 +952,14 @@ public class jpFormBien extends javax.swing.JPanel {
     }//GEN-LAST:event_btbModificarActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-    /*    FrmBajaBien ventana = new FrmBajaBien(this.miparent  ,rootPaneCheckingEnabled);
-        ventana.setBien(unBien);
-        ventana.setUser(this.user);
-        ventana.inicializar();
-        ventana.setLocationRelativeTo(null);
-        ventana.setVisible(true);
-*/
+       
+        this.miparent.mostrarBajaBien(unBien);
+        
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         // TODO add your handling code here:
-        if(this.btnGuardar.isEnabled()){
-            int respuesta = JOptionPane.showConfirmDialog(null, "Está editando un Bien.\n¿Desea salir de todos modos?", "Confirmación", JOptionPane.YES_NO_OPTION);
-            switch(respuesta) {
-                case JOptionPane.YES_OPTION:
-                //--- Operaciones en caso afirmativo
-                    this.miparent.ocultarBien();
-                            
-                    
-                break;
-            }
-        }else{
-        this.miparent.ocultarBien();
-        }
+        this.accionCancelarBoton(true);
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
@@ -965,17 +976,7 @@ public class jpFormBien extends javax.swing.JPanel {
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
-        if(this.btnGuardar.isEnabled()){
-            int respuesta = JOptionPane.showConfirmDialog(null, "Está editando un Bien.\n¿Desea salir de todos modos?", "Confirmación", JOptionPane.YES_NO_OPTION);
-            switch(respuesta) {
-                case JOptionPane.YES_OPTION:
-                //--- Operaciones en caso afirmativo
-                this.miparent.ocultarBien();
-                break;
-            }
-        }else{
-         this.miparent.ocultarBien();
-        }
+        this.accionCancelarBoton(false);
     }//GEN-LAST:event_btnSalirActionPerformed
 
 

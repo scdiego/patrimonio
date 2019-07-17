@@ -6,6 +6,7 @@
  */
 package Mdi;
 
+import Negocio.Bien;
 import Negocio.Usuario;
 
 /**
@@ -165,6 +166,12 @@ public class MainMdi extends javax.swing.JFrame {
     }  
     public void ocultarFrmImportCvs(){
         this.jifFrmImportCvs.setVisible(false);
+    }
+    
+    public void mostrarBajaBien(Bien unBien){
+         objFormBajaBien.setBien(unBien);
+         objFormBajaBien.inicializarCampos();
+         jifFormBajaBien.setVisible(true);
     }
         
 
