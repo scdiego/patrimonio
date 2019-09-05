@@ -42,7 +42,7 @@ public class BienJpaController implements Serializable {
 
        
     public BienJpaController() {
-        emf = Persistence.createEntityManagerFactory("patromonioPU");;
+        emf = Persistence.createEntityManagerFactory("patromonioPU");
     }
 
     public EntityManager getEntityManager() {
@@ -255,6 +255,11 @@ public class BienJpaController implements Serializable {
         } finally {
             em.close();
         }
+    }
+    
+    public Bien findBienNroInventario(Integer nro){
+        Bien unBien = this.findBienByNroInventario(nro).get(0);
+        return unBien;
     }
     
     public List<Bien> findBienesOrdenados(){
@@ -507,9 +512,13 @@ public class BienJpaController implements Serializable {
        em.getEntityManagerFactory().getCache().evictAll();
        
        String q = "SELECT b FROM Bien b ORDER BY b.nroInventario DESC ";
-       query = em.createQuery(q);
-       query.setMaxResults(1);
-       return (Bien) query.getSingleResult();
+        try{
+            query = em.createQuery(q);
+            query.setMaxResults(1);
+            return (Bien) query.getSingleResult();
+        } catch(NoResultException e) {
+            return null;
+        }
     }
     
     public Bien siguienteBien(int nro){

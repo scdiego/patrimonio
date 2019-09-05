@@ -6,6 +6,7 @@
  */
 package Mdi;
 
+import Negocio.Bien;
 import Negocio.Usuario;
 
 /**
@@ -25,10 +26,14 @@ public class MainMdi extends javax.swing.JFrame {
     private jpFormSectores objFormSector = new jpFormSectores();
     private FormCargo objFormCargo = new FormCargo();
     private jpFormCambiarPass objFormCambiarPass = new jpFormCambiarPass();
+    private JpFormResponsable objFormResponsable = new JpFormResponsable();
+    private FrmCvsImport objFrmImportCvs = new FrmCvsImport();
+    
+
     
     private jpRepoBienes objRepoBienes = new jpRepoBienes();
     private jpRepoLibroBienes objRepoLibroBienes = new jpRepoLibroBienes();
-    private JpRepoImpresionCargos objRepoCargos = new JpRepoImpresionCargos();
+    private JpRepoImpresionCargosV2 objRepoCargos = new JpRepoImpresionCargosV2();
     private JpRepoInfAuditoria objRepoAuditoria = new JpRepoInfAuditoria();
     
     
@@ -41,6 +46,7 @@ public class MainMdi extends javax.swing.JFrame {
     
     public void inicializarVentanas(Usuario user){
         this.inicializarUsuario(user);
+        
         jifFormBien.setContentPane(objFormBien);
         objFormBien.setMiparent(this);
         objFormBien.setUser(this.user);
@@ -55,9 +61,15 @@ public class MainMdi extends javax.swing.JFrame {
         
         jifFormSector.setContentPane(objFormSector);
         objFormSector.setParent(this);   
+        objFormSector.setUser(this.user);
+        objFormSector.setSize(800,550);
+        jifFormSector.setSize(800,550);
         
-        objFormSector.setSize(800,350);
-        jifFormSector.setSize(800,350);
+        jifFormResponsable.setContentPane(objFormResponsable);
+        objFormResponsable.setParent(this);
+        objFormResponsable.SetUser(this.user);
+        objFormResponsable.setSize(800,550);
+        jifFormResponsable.setSize(800,550);
         
         jifFormCargo.setContentPane(objFormCargo);
         objFormCargo.setParent(this);   
@@ -65,11 +77,18 @@ public class MainMdi extends javax.swing.JFrame {
         objFormCargo.setSize(800,350);
         jifFormCargo.setSize(800,350);
         
+        
+        jifFrmImportCvs.setContentPane(objFrmImportCvs);
+        objFrmImportCvs.setParent(this); 
+        objFrmImportCvs.setUser(this.user);
+        objFrmImportCvs.setSize(800,550);
+        jifFrmImportCvs.setSize(800,550);
+        
         // Reportes //
         jifRepoBienes.setContentPane(objRepoBienes);
        // objRepoBienes.setParent(this);   
-        objRepoBienes.setSize(1100,350);
-        jifRepoBienes.setSize(1100,350);
+        objRepoBienes.setSize(1100,550);
+        jifRepoBienes.setSize(1100,550);
         
         jifRepoLibroBienes.setContentPane(objRepoLibroBienes);
         objRepoLibroBienes.setParent(this);   
@@ -78,8 +97,8 @@ public class MainMdi extends javax.swing.JFrame {
         
         jifRepoCargos.setContentPane(objRepoCargos);
         //objRepoCargos.setParent(this);   
-        objRepoCargos.setSize(800,350);
-        jifRepoCargos.setSize(800,350);
+        objRepoCargos.setSize(550,450);
+        jifRepoCargos.setSize(550,450);
         
         jifRepoAuditoria.setContentPane(objRepoAuditoria);
         //objRepoAuditoria.setParent(this);   
@@ -94,7 +113,8 @@ public class MainMdi extends javax.swing.JFrame {
         
         
     }
-        public void inicializarUsuario(Usuario user){
+
+    public void inicializarUsuario(Usuario user){
       //  UsuarioJpaController daoUser = new UsuarioJpaController();
       //   this.user = daoUser.findUsuario(id);
             this.setUser(user);
@@ -141,7 +161,18 @@ public class MainMdi extends javax.swing.JFrame {
     public void ocultarCambiarPass(){
         this.jifCambiarPass.setVisible(false);
     }
-        
+    public void ocultarResponsalbe(){
+        this.jifFormResponsable.setVisible(false);
+    }  
+    public void ocultarFrmImportCvs(){
+        this.jifFrmImportCvs.setVisible(false);
+    }
+    
+    public void mostrarBajaBien(Bien unBien){
+         objFormBajaBien.setBien(unBien);
+         objFormBajaBien.inicializarCampos();
+         jifFormBajaBien.setVisible(true);
+    }
         
 
     /**
@@ -163,10 +194,13 @@ public class MainMdi extends javax.swing.JFrame {
         jifRepoCargos = new javax.swing.JInternalFrame();
         jifRepoAuditoria = new javax.swing.JInternalFrame();
         jifCambiarPass = new javax.swing.JInternalFrame();
+        jifFormResponsable = new javax.swing.JInternalFrame();
+        jifFrmImportCvs = new javax.swing.JInternalFrame();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         jmiFrmBien = new javax.swing.JMenuItem();
         jmiFrmBajaBien = new javax.swing.JMenuItem();
+        jmiFrmCvsImport = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jmiFrmCambiarPass = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
@@ -204,7 +238,7 @@ public class MainMdi extends javax.swing.JFrame {
         );
 
         desktopPane.add(jifFormBien);
-        jifFormBien.setBounds(150, 140, 123, 32);
+        jifFormBien.setBounds(150, 140, 84, 32);
 
         jifFormBajaBien.setClosable(true);
         jifFormBajaBien.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
@@ -224,7 +258,7 @@ public class MainMdi extends javax.swing.JFrame {
         );
 
         desktopPane.add(jifFormBajaBien);
-        jifFormBajaBien.setBounds(70, 20, 110, 32);
+        jifFormBajaBien.setBounds(70, 20, 83, 32);
 
         jifFormSector.setClosable(true);
         jifFormSector.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
@@ -244,7 +278,7 @@ public class MainMdi extends javax.swing.JFrame {
         );
 
         desktopPane.add(jifFormSector);
-        jifFormSector.setBounds(110, 30, 110, 32);
+        jifFormSector.setBounds(110, 30, 87, 32);
 
         jifFormCargo.setClosable(true);
         jifFormCargo.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
@@ -264,7 +298,7 @@ public class MainMdi extends javax.swing.JFrame {
         );
 
         desktopPane.add(jifFormCargo);
-        jifFormCargo.setBounds(150, 20, 110, 32);
+        jifFormCargo.setBounds(150, 20, 86, 32);
 
         jifRepoBienes.setClosable(true);
         jifRepoBienes.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
@@ -286,7 +320,7 @@ public class MainMdi extends javax.swing.JFrame {
         );
 
         desktopPane.add(jifRepoBienes);
-        jifRepoBienes.setBounds(30, 110, 128, 32);
+        jifRepoBienes.setBounds(30, 110, 101, 32);
 
         jifRepoLibroBienes.setClosable(true);
         jifRepoLibroBienes.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
@@ -308,7 +342,7 @@ public class MainMdi extends javax.swing.JFrame {
         );
 
         desktopPane.add(jifRepoLibroBienes);
-        jifRepoLibroBienes.setBounds(90, 110, 122, 32);
+        jifRepoLibroBienes.setBounds(90, 110, 95, 32);
 
         jifRepoCargos.setClosable(true);
         jifRepoCargos.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
@@ -330,7 +364,7 @@ public class MainMdi extends javax.swing.JFrame {
         );
 
         desktopPane.add(jifRepoCargos);
-        jifRepoCargos.setBounds(150, 110, 126, 32);
+        jifRepoCargos.setBounds(150, 110, 100, 32);
 
         jifRepoAuditoria.setClosable(true);
         jifRepoAuditoria.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
@@ -352,7 +386,7 @@ public class MainMdi extends javax.swing.JFrame {
         );
 
         desktopPane.add(jifRepoAuditoria);
-        jifRepoAuditoria.setBounds(200, 110, 128, 32);
+        jifRepoAuditoria.setBounds(200, 110, 102, 32);
 
         jifCambiarPass.setClosable(true);
         jifCambiarPass.setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
@@ -372,7 +406,43 @@ public class MainMdi extends javax.swing.JFrame {
         );
 
         desktopPane.add(jifCambiarPass);
-        jifCambiarPass.setBounds(320, 20, 110, 32);
+        jifCambiarPass.setBounds(320, 20, 93, 32);
+
+        jifFormResponsable.setClosable(true);
+        jifFormResponsable.setIconifiable(true);
+        jifFormResponsable.setVisible(false);
+
+        javax.swing.GroupLayout jifFormResponsableLayout = new javax.swing.GroupLayout(jifFormResponsable.getContentPane());
+        jifFormResponsable.getContentPane().setLayout(jifFormResponsableLayout);
+        jifFormResponsableLayout.setHorizontalGroup(
+            jifFormResponsableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jifFormResponsableLayout.setVerticalGroup(
+            jifFormResponsableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        desktopPane.add(jifFormResponsable);
+        jifFormResponsable.setBounds(290, 220, 50, 32);
+
+        jifFrmImportCvs.setClosable(true);
+        jifFrmImportCvs.setIconifiable(true);
+        jifFrmImportCvs.setVisible(false);
+
+        javax.swing.GroupLayout jifFrmImportCvsLayout = new javax.swing.GroupLayout(jifFrmImportCvs.getContentPane());
+        jifFrmImportCvs.getContentPane().setLayout(jifFrmImportCvsLayout);
+        jifFrmImportCvsLayout.setHorizontalGroup(
+            jifFrmImportCvsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jifFrmImportCvsLayout.setVerticalGroup(
+            jifFrmImportCvsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        desktopPane.add(jifFrmImportCvs);
+        jifFrmImportCvs.setBounds(290, 220, 24, 32);
 
         fileMenu.setMnemonic('f');
         fileMenu.setText("Operaciones");
@@ -393,6 +463,14 @@ public class MainMdi extends javax.swing.JFrame {
             }
         });
         fileMenu.add(jmiFrmBajaBien);
+
+        jmiFrmCvsImport.setText("Importar Bienes");
+        jmiFrmCvsImport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiFrmCvsImportActionPerformed(evt);
+            }
+        });
+        fileMenu.add(jmiFrmCvsImport);
         fileMenu.add(jSeparator1);
 
         jmiFrmCambiarPass.setText("Cambiar Password");
@@ -414,6 +492,11 @@ public class MainMdi extends javax.swing.JFrame {
         fileMenu.add(jSeparator3);
 
         jmiFrmResponsables.setText("Responsables");
+        jmiFrmResponsables.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiFrmResponsablesActionPerformed(evt);
+            }
+        });
         fileMenu.add(jmiFrmResponsables);
         fileMenu.add(jSeparator4);
 
@@ -495,7 +578,9 @@ public class MainMdi extends javax.swing.JFrame {
 
     private void jmiFrmSectoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiFrmSectoresActionPerformed
         // TODO add your handling code here:
+       // jifFormSector.inicializar();
         jifFormSector.setVisible(true);
+
     }//GEN-LAST:event_jmiFrmSectoresActionPerformed
 
     private void jmiFrmCargosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiFrmCargosActionPerformed
@@ -527,6 +612,16 @@ public class MainMdi extends javax.swing.JFrame {
         // TODO add your handling code here:
         jifCambiarPass.setVisible(true);
     }//GEN-LAST:event_jmiFrmCambiarPassActionPerformed
+
+    private void jmiFrmResponsablesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiFrmResponsablesActionPerformed
+        // TODO add your handling code here:
+        jifFormResponsable.setVisible(true);
+    }//GEN-LAST:event_jmiFrmResponsablesActionPerformed
+
+    private void jmiFrmCvsImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiFrmCvsImportActionPerformed
+        // TODO add your handling code here:
+        jifFrmImportCvs.setVisible(true);
+    }//GEN-LAST:event_jmiFrmCvsImportActionPerformed
 
     /**
      * @param args the command line arguments
@@ -580,7 +675,9 @@ public class MainMdi extends javax.swing.JFrame {
     private javax.swing.JInternalFrame jifFormBajaBien;
     private javax.swing.JInternalFrame jifFormBien;
     private javax.swing.JInternalFrame jifFormCargo;
+    private javax.swing.JInternalFrame jifFormResponsable;
     private javax.swing.JInternalFrame jifFormSector;
+    private javax.swing.JInternalFrame jifFrmImportCvs;
     private javax.swing.JInternalFrame jifRepoAuditoria;
     private javax.swing.JInternalFrame jifRepoBienes;
     private javax.swing.JInternalFrame jifRepoCargos;
@@ -589,6 +686,7 @@ public class MainMdi extends javax.swing.JFrame {
     private javax.swing.JMenuItem jmiFrmBien;
     private javax.swing.JMenuItem jmiFrmCambiarPass;
     private javax.swing.JMenuItem jmiFrmCargos;
+    private javax.swing.JMenuItem jmiFrmCvsImport;
     private javax.swing.JMenuItem jmiFrmResponsables;
     private javax.swing.JMenuItem jmiFrmSectores;
     private javax.swing.JMenuItem jmiSalir;

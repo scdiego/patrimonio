@@ -281,4 +281,13 @@ public class Bien implements Serializable {
             return null;
         }
     }
+    
+    public Responsable SubresponsableAsignado(){
+        AsignacionJpaController asignacionDao = new AsignacionJpaController();
+        try {
+            return asignacionDao.findSubResponsableByNroInventario(this.nroInventario);
+        } catch (NoResultException e ){
+            return null;
+        }
+    }
 }

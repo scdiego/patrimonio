@@ -112,10 +112,15 @@ public class jpFormBien extends javax.swing.JPanel {
     }
     
     public void cargarUltimo(){
-        this.unBien = this.dao.ultimoBien();
-        this.btbModificar.setEnabled(!this.unBien.isDebaja());
-        this.btnEliminar.setEnabled(!this.unBien.isDebaja());
-       this.completarTextos();
+        try{
+            this.unBien = this.dao.ultimoBien();
+            this.btbModificar.setEnabled(!this.unBien.isDebaja());
+            this.btnEliminar.setEnabled(!this.unBien.isDebaja());
+            this.completarTextos();
+        }
+        catch (NullPointerException e){
+            // nada
+        }
     }
     
     public void activarComponentes(boolean var ){
@@ -269,6 +274,9 @@ public class jpFormBien extends javax.swing.JPanel {
         this.txtNrodeInventario.setText(null);
         this.txtResolucion.setText(null);
         this.txtValor.setText(null);
+        this.txtResponsable.setText(null);
+        this.txtSubResponsable.setText(null);
+        this.txtArea.setText(null);
       //  this.txtResolucionBaja.setText(null);
       //  this.txtFechaBaja.setText(null);
        
@@ -346,11 +354,17 @@ public class jpFormBien extends javax.swing.JPanel {
         if(this.unBien.getFechaBaja() != null){
             this.txtFechaBaja.setText(fecha.DateToString(this.unBien.getFechaBaja()));
         }
-        
-        
-        
-        /**/
-        
+         this.competarTextosCargos();
+    }
+    
+    public void competarTextosCargos(){
+        try{
+            this.txtResponsable.setText(this.unBien.responsableAsignado().getNombre());
+            this.txtArea.setText(this.unBien.responsableAsignado().getSector().getNombre());
+        }catch (NullPointerException e){
+            //nada
+        }
+ 
     }
     public final void activarBotonesSeleccion(){
        /*     this.activarBM(true);
@@ -363,6 +377,30 @@ public class jpFormBien extends javax.swing.JPanel {
         */
     }
     
+    public void accionCancelarBoton(boolean limpiarCampos){
+        // TODO add your handling code here:
+        if(this.btnGuardar.isEnabled()){
+            int respuesta = JOptionPane.showConfirmDialog(null, "Está editando un Bien.\n¿Desea salir de todos modos?", "Confirmación", JOptionPane.YES_NO_OPTION);
+            switch(respuesta) {
+                case JOptionPane.YES_OPTION:
+                //--- Operaciones en caso afirmativo
+                    this.nuevoBien = true;
+                    this.activarBM(false);
+                    
+                    if(limpiarCampos){
+                        this.limpiarComponentes();
+                    }else{
+                        this.miparent.ocultarBien();    
+                    }
+                    this.cargarUltimo();
+                            
+                    
+                break;
+            }
+        }else{
+        this.miparent.ocultarBien();
+        }
+    }
 
     
     public void guardarAsignacion(){
@@ -535,15 +573,6 @@ public class jpFormBien extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addContainerGap()
@@ -559,17 +588,27 @@ public class jpFormBien extends javax.swing.JPanel {
                                 .addGap(56, 56, 56)
                                 .addComponent(jLabel4)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(txtValor, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtNroActa, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                            .addComponent(txtNrodeInventario, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                            .addComponent(txtResolucion, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                            .addComponent(txtCodigo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                            .addComponent(txtFechaAlta, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                            .addComponent(txtNroExpediente, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
+                        .addGap(0, 150, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(txtValor, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(txtNroActa, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                                .addComponent(txtNrodeInventario, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                                .addComponent(txtResolucion, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                                .addComponent(txtCodigo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                                .addComponent(txtFechaAlta, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                                .addComponent(txtNroExpediente, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)))
-                        .addGap(0, 28, Short.MAX_VALUE)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane2))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -610,9 +649,9 @@ public class jpFormBien extends javax.swing.JPanel {
                     .addComponent(txtNroExpediente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jLabel4)
+                .addGap(7, 7, 7)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -816,7 +855,7 @@ public class jpFormBien extends javax.swing.JPanel {
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(373, Short.MAX_VALUE)))
+                    .addContainerGap(378, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -913,30 +952,14 @@ public class jpFormBien extends javax.swing.JPanel {
     }//GEN-LAST:event_btbModificarActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-    /*    FrmBajaBien ventana = new FrmBajaBien(this.miparent  ,rootPaneCheckingEnabled);
-        ventana.setBien(unBien);
-        ventana.setUser(this.user);
-        ventana.inicializar();
-        ventana.setLocationRelativeTo(null);
-        ventana.setVisible(true);
-*/
+       
+        this.miparent.mostrarBajaBien(unBien);
+        
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         // TODO add your handling code here:
-        if(this.btnGuardar.isEnabled()){
-            int respuesta = JOptionPane.showConfirmDialog(null, "Está editando un Bien.\n¿Desea salir de todos modos?", "Confirmación", JOptionPane.YES_NO_OPTION);
-            switch(respuesta) {
-                case JOptionPane.YES_OPTION:
-                //--- Operaciones en caso afirmativo
-                    this.miparent.ocultarBien();
-                            
-                    
-                break;
-            }
-        }else{
-        this.miparent.ocultarBien();
-        }
+        this.accionCancelarBoton(true);
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
@@ -953,17 +976,7 @@ public class jpFormBien extends javax.swing.JPanel {
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
-        if(this.btnGuardar.isEnabled()){
-            int respuesta = JOptionPane.showConfirmDialog(null, "Está editando un Bien.\n¿Desea salir de todos modos?", "Confirmación", JOptionPane.YES_NO_OPTION);
-            switch(respuesta) {
-                case JOptionPane.YES_OPTION:
-                //--- Operaciones en caso afirmativo
-                this.miparent.ocultarBien();
-                break;
-            }
-        }else{
-         this.miparent.ocultarBien();
-        }
+        this.accionCancelarBoton(false);
     }//GEN-LAST:event_btnSalirActionPerformed
 
 
